@@ -26,6 +26,7 @@ for example:
 ```
 export REGION=ap-southeast-2
 export BUCKET="lambdabucket1978"
+export PROFILE= <aws client profile>
 aws s3 mb s3://${BUCKET} --region ${REGION}
 ```
 
@@ -35,6 +36,14 @@ Once the `BUCKET` and optional `REGION` variables are set, when you run `upload_
 * Use `cloudformation package` to zip up the application and upload to s3
 * As part of the `cloudformation package`, a new `generated-cloudformation.yaml` file will be created with the `CodeUri` pointing at the newly uploaded zip file
 * Invoke a `cloudformation deploy` to execute the creation of a new stack named `aws-backup-lambda`
+
+
+If it throws a requirements error, please add the folloeing to ~/.pydistutils.cfg
+
+```
+[install]
+prefix=
+```
 
 Once complete, you should have a new CloudFormation stack, which will have created the Lambda and all required AWS assets
 
