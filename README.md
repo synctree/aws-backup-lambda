@@ -38,7 +38,7 @@ Once the `BUCKET` and optional `REGION` variables are set, when you run `upload_
 * Invoke a `cloudformation deploy` to execute the creation of a new stack named `aws-backup-lambda`
 
 
-If it throws a requirements error, please add the folloeing to ~/.pydistutils.cfg
+If it throws a requirements error, please add the following to ~/.pydistutils.cfg
 
 ```
 [install]
