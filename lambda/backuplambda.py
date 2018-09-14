@@ -329,16 +329,17 @@ class RDSBackupManager(BaseBackupManager):
             aws_tagset.append({"Key": k, "Value": tags[k]})
 
         date = datetime.today().strftime('%d-%m-%Y-%H-%M-%S')
-        snapshot_id = self.period + '-' + self.resolve_backupable_id(resource) + "-" + date + "-" + self.date_suffix
+        snapshot_id = self.resolve_backupable_id(resource) + "-" + date
 
         if 'DBClusterIdentifier' in resource:
             current_snap = self.conn.create_db_cluster_snapshot(
                 DBClusterIdentifier=self.resolve_backupable_id(resource),
                 DBClusterSnapshotIdentifier=snapshot_id,
                 Tags=aws_tagset)
+            print(current_snap)
         else:
             current_snap = self.conn.create_db_snapshot(DBInstanceIdentifier=self.resolve_backupable_id(resource),
-                                                        DBSnapshotIdentifier=snapshot_id,
+                                                        DBSnapshotIdentifier=snapshot_id, SnapshotType='manual',
                                                         Tags=aws_tagset)
 
     def list_snapshots_for_resource(self, resource):
@@ -371,6 +372,7 @@ class RDSBackupManager(BaseBackupManager):
 
     def db_has_tag(self, db_instance):
         arn = self.build_arn(db_instance)
+        print('arn =' + arn)
         tags = self.conn.list_tags_for_resource(ResourceName=arn)['TagList']
 
         for tag in tags:
@@ -398,8 +400,10 @@ class RDSBackupManager(BaseBackupManager):
 
         region = self.conn.meta.region_name
         account_number = self.resolve_account_number()
-
-        return "arn:aws:rds:{0}:{1}:db:{2}".format(region, account_number, instance_id)
+        if instance_id == 'idex-staging':
+            return "arn:aws:rds:{0}:{1}:cluster:{2}".format(region, account_number, instance_id)
+        else:
+            return "arn:aws:rds:{0}:{1}:db:{2}".format(region, account_number, instance_id)
 
 
 def lambda_handler(event, context={}):
